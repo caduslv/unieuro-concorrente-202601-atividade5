@@ -9,7 +9,7 @@
 ---
 
 # 1. Descrição do Problema
-
+O problema implementado consiste no processamento do conjunto de dados Quora Question Pairs, especificamente do arquivo nlp_features_train.csv, com o objetivo de analisar e extrair informações relevantes a partir dos dados.
 ## Orientações para preenchimento
 
 Explique:
@@ -22,17 +22,17 @@ Explique:
 **Questões que devem ser respondidas:**
 
 * Qual é o objetivo do programa?
-  O objetivo é extrair métricas como número de linhas, palavras, caracteres e ocorrência de palavras-chave (erro, warning e info).
+O objetivo do programa é realizar a leitura do dataset e processar seus registros, permitindo avaliar o desempenho da execução tanto na versão sequencial quanto na versão paralela utilizando MPI. A aplicação percorre os dados e realiza operações de análise sobre cada linha do arquivo.
 
 * Qual o volume de dados processado?
-  O volume de dados utilizado nos testes corresponde ao conjunto log2, contendo milhões de registros.
-  
+O volume de dados processado corresponde a um arquivo com centenas de milhares de registros, o que caracteriza um cenário adequado para avaliação de desempenho em computação paralela.
+ 
 * Qual algoritmo foi utilizado?
-  O algoritmo utilizado realiza leitura sequencial dos arquivos e contagem de ocorrências.
-
+O algoritmo utilizado é baseado na leitura sequencial dos dados, onde cada linha do arquivo é processada individualmente. Na versão paralela, o dataset é dividido entre múltiplos processos por meio da utilização de MPI, permitindo que diferentes partes do arquivo sejam processadas simultaneamente. Ao final, os resultados parciais são combinados para gerar o resultado final.
+  
 * Qual a complexidade aproximada do algoritmo?
-  A complexidade do algoritmo é O(n), onde n representa o número total de linhas dos arquivos.
-
+ A complexidade do algoritmo é aproximadamente O(n), onde n representa o número total de linhas do dataset, uma vez que cada registro é percorrido apenas uma vez durante a execução.
+ 
 ---
 
 # 2. Ambiente Experimental
@@ -69,9 +69,17 @@ Explique como os experimentos foram conduzidos.
 Descrever:
 
 * Como o tempo de execução foi medido
+O tempo de execução foi medido utilizando funções de temporização da própria linguagem Python, considerando o tempo total desde o início da execução do programa até a finalização do processamento dos dados.
+  
 * Quantas execuções foram realizadas
+  Para cada configuração, foram realizadas 3 execuções independentes, com o objetivo de reduzir variações causadas por fatores externos, como processos em segundo plano e gerenciamento do sistema operacional.
+  
 * Se foi utilizada média dos tempos
+Foi utilizada a média aritmética dos tempos obtidos nessas execuções, garantindo maior confiabilidade nos resultados apresentados.
+  
 * Qual tamanho da entrada foi usado
+
+O tamanho da entrada utilizado foi o arquivo nlp_features_train.csv, pertencente ao conjunto de dados Quora Question Pairs, contendo centenas de milhares de registros. Esse volume de dados é adequado para avaliar o impacto da paralelização no desempenho da aplicação.  
 
 ### Configurações testadas
 
@@ -109,11 +117,11 @@ Preencha a tabela com os **tempos médios de execução** obtidos.
 
 | Nº Threads/Processos | Tempo de Execução (s) |
 | -------------------- | --------------------- |
-| 1                    |  171,11               |
-| 2                    |  79,81                |
-| 4                    |  67,09                |
-| 8                    |  66,67                |
-| 12                   |  66,21                |
+| 1                    |  34,40                |
+| 2                    |  27,28                |
+| 4                    |  16,99                |
+| 8                    |  12,33                |
+| 12                   |  11,23                |
 
 ---
 
@@ -151,10 +159,10 @@ Preencha a tabela abaixo utilizando os tempos medidos.
 | Processos | Tempo (s) | Speedup | Eficiência |
 |----------|----------|--------|-----------|
 | 1        |     0,171|   1,0  |  100%     |
-| 2        |     0,73 |   0,21 |  10,82%   |
-| 4        |     0,67 |   0,25 |  6,38%    |
-| 8        |     0,66 |   0,25 |  3,24%    |
-| 12       |     0,66 |   0,25 |  2,16%    |
+| 2        |     0,73 |  1,26  |  63,10%   |
+| 4        |     0,67 |   2,02 |  50,60%   |
+| 8        |     0,66 |   2,79 |  34,90%   |
+| 12       |     0,66 |   3,06 |  25,50%   |
 
 
 ---
@@ -185,40 +193,42 @@ Realize uma análise crítica dos resultados obtidos.
 ## Questões a serem respondidas
 
 * O speedup obtido foi próximo do ideal?
-Os resultados mostram que o uso de paralelismo reduz significativamente o tempo de execução.
+O speedup obtido não foi próximo do ideal. Em um cenário ideal, com 12 processos, seria esperado um speedup próximo de 12. No entanto, o valor máximo observado foi aproximadamente 3,06, indicando que há limitações significativas que impedem o aproveitamento total do paralelismo.
 
 * A aplicação apresentou escalabilidade?
-
+A aplicação apresentou escalabilidade parcial. Houve melhora consistente no desempenho ao aumentar o número de processos, especialmente de 1 para 4 processos. Entretanto, a partir desse ponto, os ganhos continuam, porém em menor proporção, evidenciando redução na eficiência do paralelismo.
 
 * Em qual ponto a eficiência começou a cair?
-  A eficiência começou a cair a partir de 4 processos, tornando-se mais evidente conforme o número de processos aumenta.
+A eficiência começou a cair já a partir de 2 processos (63,10%), e essa queda se torna mais acentuada com o aumento do número de processos, chegando a aproximadamente 25,50% com 12 processos. Isso indica que o custo adicional do paralelismo cresce mais rapidamente do que os benefícios obtidos.
   
 * O número de threads ultrapassa o número de núcleos físicos da máquina?
-  O número de threads/processos se aproxima e pode ultrapassar a quantidade de núcleos físicos da máquina, o que contribui para perda de desempenho devido à concorrência de recursos.
-
+Considerando que a máquina possui 6 núcleos físicos, a execução com 8 e 12 processos ultrapassa essa quantidade, caracterizando oversubscription. Isso provoca maior disputa por CPU e contribui diretamente para a queda de eficiência observada.
   
 * Houve overhead de paralelização?
-  
+Foi identificado overhead de paralelização, especialmente nas configurações com maior número de processos, impactando negativamente o desempenho global.  
 
 Discutir possíveis causas para:
 
 * perda de desempenho
-  As principais causas para a perda de desempenho incluem o custo de sincronização entre processos, limitação de I/O (leitura de arquivos), contenção de memória e cache, além do overhead de gerenciamento do paralelismo.
+
 * gargalos no algoritmo
-  O gargalo principal do sistema está relacionado ao acesso ao disco e ao custo de coordenação entre processos.
+O processamento envolve leitura de arquivos, o que torna a aplicação parcialmente limitada por operações de I/O. Esse tipo de operação não se beneficia totalmente do paralelismo. 
   
 * sincronização entre threads/processos
-  ocorre quando múltiplos processos precisam coordenar execução e acesso a recursos compartilhados, gerando espera e redução de desempenho.
+A necessidade de consolidar os resultados ao final da execução pode gerar espera entre processos, reduzindo a eficiência.
   
 * comunicação entre processos
-  envolve o custo de troca de dados entre processos, que no modelo multiprocessing exige serialização e transferência de informações, aumentando o overhead.
-  
-* contenção de memória ou cache
-  acontece quando vários processos competem pelo mesmo recurso de memória ou cache da CPU, causando atrasos devido a acessos simultâneos e perda de eficiência.
+No uso de MPI, há troca de dados entre processos, o que implica custo de comunicação e pode reduzir o ganho de desempenho, principalmente quando há grande volume de dados.
 
+* contenção de memória ou cache
+Vários processos acessando simultaneamente a memória principal podem causar competição por recursos e perda de eficiência no uso de cache. 
 ---
 
 # 11. Conclusão
 
-O paralelismo trouxe ganho significativo, reduzindo o tempo de execução em relação à versão serial.
+A implementação paralela com MPI reduziu o tempo de execução em relação à versão sequencial, principalmente nas primeiras configurações de processos.
+
+Observou-se melhor desempenho até cerca de 4 processos, com ganhos progressivamente menores após esse ponto. Isso ocorre devido ao overhead e limitações de recursos.
+
+Conclui-se que o paralelismo é eficaz, mas deve ser utilizado de forma equilibrada, considerando o ponto ótimo de desempenho da aplicação.
 ---
