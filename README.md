@@ -161,16 +161,19 @@ Preencha a tabela abaixo utilizando os tempos medidos.
 
 ________________________________________
 7. Gráfico de Tempo de Execução
-  ![Gráfico Tempo Execução](graficos/tempo_execucao.png)
+  
+![Gráfico Tempo Execução](graficos/tempo_execucao.png)
 
 ---
 ________________________________________
 8. Gráfico de Speedup
+
 ![Gráfico Speedup](graficos/speedup.png)
 
 ---
 ________________________________________
 9. Gráfico de Eficiência
+
 ![Gráfico Eficiência](graficos/eficiencia.png)
 
 ---
