@@ -1,33 +1,221 @@
-# unieuro-concorrente-202601-atividade5
+# Relatório da NOME DA ATIVIDADE
 
-Testar a solução MPI construindo relatório de avaliação de performance para 2, 4, 8, 12 processos.
+**Disciplina:** PROGRAMAÇÃO CONCORRENTE E DISTRIBUÍDA  
+**Aluno(s):** Carlos Eduardo Pinheiro Da Silva.  
+**Turma:** 5° Semestre/Análise e Desenvolvimento de Sistemas  
+**Professor:** Rafael Marconi Ramos  
+**Data:** 10/04/2026
 
-## Instalação MPI
+---
 
-1) Instalar o MPI para Windows  
-https://www.microsoft.com/en-us/download/details.aspx?id=100593
+# 1. Descrição do Problema
 
-2) Instalar mpi4py
-pip install -r requeriments.txt
+## Orientações para preenchimento
 
-## Onde buscar os dados
+Explique:
 
-O site do Kaggle apresenta vários desafios, bancos de dados e projetos que estão abertos a comunidade para apoio. Alguns deles tem prêmios em dinheiro.
+* Qual problema foi implementado
+* Qual algoritmo foi utilizado
+* Qual o tamanho da entrada utilizada nos testes
+* Qual o objetivo da paralelização
 
-Para esse experimento devemos buscar o arquivo "nlp_features_train.csv" no Quora Question Paris.
+**Questões que devem ser respondidas:**
 
-https://www.kaggle.com/datasets/elemento/quora-question-pairs?select=nlp_features_train.csv
+* Qual é o objetivo do programa?
+  O objetivo é extrair métricas como número de linhas, palavras, caracteres e ocorrência de palavras-chave (erro, warning e info).
 
-## Executar
+* Qual o volume de dados processado?
+  O volume de dados utilizado nos testes corresponde ao conjunto log2, contendo milhões de registros.
+  
+* Qual algoritmo foi utilizado?
+  O algoritmo utilizado realiza leitura sequencial dos arquivos e contagem de ocorrências.
 
-Como executar o projeto:
+* Qual a complexidade aproximada do algoritmo?
+  A complexidade do algoritmo é O(n), onde n representa o número total de linhas dos arquivos.
 
-### Versão serial
+---
+
+# 2. Ambiente Experimental
+
+Descreva o ambiente em que os experimentos foram realizados.
+
+## Orientações
+
+Informar as características do hardware e software utilizados na execução dos testes.
+
+| Item                        | Descrição |
+| --------------------------- | --------- |
+| Processador                 |12th Gen Intel(R) Core(TM) i5-12500 3.00 GHz|
+| Número de núcleos           |6 núcleos (cores) físicos|
+| Memória RAM                 |16,0 GB (utilizável: 15,7 GB)|
+| Sistema Operacional         |Windows 11 Pro|
+| Linguagem utilizada         |Python|
+| Biblioteca de paralelização |concurrent.futures|
+| Compilador / Versão         |CPython/ 3.13|
+
+---
+
+# 3. Metodologia de Testes
+
+- 1 processo (serial)
+- 2 processos
+- 4 processos
+- 8 processos
+- 12 processos
+Explique como os experimentos foram conduzidos.
+
+## Orientações
+
+Descrever:
+
+* Como o tempo de execução foi medido
+* Quantas execuções foram realizadas
+* Se foi utilizada média dos tempos
+* Qual tamanho da entrada foi usado
+
+### Configurações testadas
+
+Os experimentos devem ser realizados nas seguintes configurações:
+
+* 1 thread/processo (versão serial)
+* 2 threads/processos
+* 4 threads/processos
+* 8 threads/processos
+* 12 threads/processos
+
+### Procedimento experimental
+
+Descrever:
+
+* Número de execuções para cada configuração
+  Cada configuração de paralelismo (1, 2, 4, 8 e 12 processos) foi executada 3 vezes, sendo utilizado o valor médio dos tempos para reduzir variações experimentais.
+  
+* Forma de cálculo da média
+  O cálculo da média foi feito somando os tempos de cada execução e dividindo pelo número de repetições.
+  
+* Condições de execução (ex: máquina dedicada, carga do sistema, etc.)
+As execuções foram realizadas em máquina local, não dedicada, podendo haver variações de desempenho devido a processos em segundo plano e uso do sistema operacional durante os testes.
+
+---
+
+# 4. Resultados Experimentais
+
+Preencha a tabela com os **tempos médios de execução** obtidos.
+
+## Orientações
+
+* O tempo deve ser informado em **segundos**
+* Utilizar a **média das execuções**
+
+| Nº Threads/Processos | Tempo de Execução (s) |
+| -------------------- | --------------------- |
+| 1                    |  171,11               |
+| 2                    |  79,81                |
+| 4                    |  67,09                |
+| 8                    |  66,67                |
+| 12                   |  66,21                |
+
+---
+
+# 5. Cálculo de Speedup e Eficiência
+
+## Fórmulas Utilizadas
+
+### Speedup
+
 ```
-python avaliador.py
-```
-### Versão distribuída
-```
-mpiexec -n 4 python avaliador_mpi.py
+Speedup(p) = T(1) / T(p)
 ```
 
+Onde:
+
+* **T(1)** = tempo da execução serial
+* **T(p)** = tempo com p threads/processos
+
+### Eficiência
+
+```
+Eficiência(p) = Speedup(p) / p
+```
+
+Onde:
+
+* **p** = número de threads ou processos
+
+---
+
+# 6. Tabela de Resultados
+
+Preencha a tabela abaixo utilizando os tempos medidos.
+
+| Processos | Tempo (s) | Speedup | Eficiência |
+|----------|----------|--------|-----------|
+| 1        |     0,171|   1,0  |  100%     |
+| 2        |     0,73 |   0,21 |  10,82%   |
+| 4        |     0,67 |   0,25 |  6,38%    |
+| 8        |     0,66 |   0,25 |  3,24%    |
+| 12       |     0,66 |   0,25 |  2,16%    |
+
+
+---
+
+________________________________________
+7. Gráfico de Tempo de Execução
+  ![Gráfico Tempo Execução](tempo_execucao.png)
+
+---
+________________________________________
+8. Gráfico de Speedup
+![Gráfico Speedup](speedup.png)
+
+---
+________________________________________
+9. Gráfico de Eficiência
+![Gráfico Eficiência](eficiencia.png)
+
+---
+
+# 10. Análise dos Resultados
+
+Realize uma análise crítica dos resultados obtidos.
+
+## Questões a serem respondidas
+
+* O speedup obtido foi próximo do ideal?
+Os resultados mostram que o uso de paralelismo reduz significativamente o tempo de execução.
+
+* A aplicação apresentou escalabilidade?
+
+
+* Em qual ponto a eficiência começou a cair?
+  A eficiência começou a cair a partir de 4 processos, tornando-se mais evidente conforme o número de processos aumenta.
+  
+* O número de threads ultrapassa o número de núcleos físicos da máquina?
+  O número de threads/processos se aproxima e pode ultrapassar a quantidade de núcleos físicos da máquina, o que contribui para perda de desempenho devido à concorrência de recursos.
+
+  
+* Houve overhead de paralelização?
+  
+
+Discutir possíveis causas para:
+
+* perda de desempenho
+  As principais causas para a perda de desempenho incluem o custo de sincronização entre processos, limitação de I/O (leitura de arquivos), contenção de memória e cache, além do overhead de gerenciamento do paralelismo.
+* gargalos no algoritmo
+  O gargalo principal do sistema está relacionado ao acesso ao disco e ao custo de coordenação entre processos.
+  
+* sincronização entre threads/processos
+  ocorre quando múltiplos processos precisam coordenar execução e acesso a recursos compartilhados, gerando espera e redução de desempenho.
+  
+* comunicação entre processos
+  envolve o custo de troca de dados entre processos, que no modelo multiprocessing exige serialização e transferência de informações, aumentando o overhead.
+  
+* contenção de memória ou cache
+  acontece quando vários processos competem pelo mesmo recurso de memória ou cache da CPU, causando atrasos devido a acessos simultâneos e perda de eficiência.
+
+---
+
+# 11. Conclusão
+
+O paralelismo trouxe ganho significativo, reduzindo o tempo de execução em relação à versão serial.
+---
